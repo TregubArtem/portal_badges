@@ -1,5 +1,7 @@
 import random
 
+from parser import PageParser
+
 
 class Attempt:
     def __init__(self, sender, recipient_id, badge_id):
@@ -24,12 +26,17 @@ class Attempt:
 
 
 class Sender:
-    def __init__(self, profile_id, token, cookie):
+    def __init__(self, profile_id, token, cookie, is_send_only):
         self.profile_id = profile_id
         self.token = token
         self.cookie = cookie
         self.attempts = dict()
         self.recipients_rating = dict()
+        self.is_send_only = is_send_only
+
+        self.profile_name = ""
+        self.points_before = 0
+        self.points_after = 0
 
     def __str__(self):
         return "Sender{" + self.profile_id + "; " + self.token + "}"
@@ -67,6 +74,19 @@ class Sender:
                             self.attempts[badge] = attempt
 
                             return attempt
+
+    def get_points(self, credentials, before):
+        result = PageParser(credentials).get_points(credentials, self)
+
+        if before:
+            self.profile_name = result.name
+            self.points_before = result.points
+
+        else:
+            self.points_after = result.points
+
+    def print_points(self):
+        print(self.profile_name + "\t\t+" + str(self.points_after - self.points_before))
 
 
 class Credentials:

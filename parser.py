@@ -2,7 +2,13 @@ import requests
 from pyquery import PyQuery
 
 
-class PortalPageParser:
+class PointResult:
+    def __init__(self, name, points):
+        self.name = name
+        self.points = points
+
+
+class PageParser:
     def __init__(self, credentials):
         self.domain = credentials.domain
         self.endpoint = credentials.endpoint_profile
@@ -19,4 +25,4 @@ class PortalPageParser:
         name = query(".personal-name__title").text().split(" ")[0]
         points = query(".profile__user--points").text()
 
-        return str(name) + ":\t" + str(points)
+        return PointResult(str(name), int(points))
